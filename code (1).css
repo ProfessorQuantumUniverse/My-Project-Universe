@@ -1,0 +1,382 @@
+/* === RESET & BASE === */
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+    --color-bg-deep: #010409;      /* GitHub Dark Dimmed - Very Deep Blue/Black */
+    --color-bg-medium: #0d1117;    /* GitHub Dark Dimmed - Medium */
+    --color-bg-light: #161b22;     /* GitHub Dark Dimmed - Lighter */
+    --color-border: #30363d;       /* GitHub Dark Dimmed - Border */
+    --color-text-primary: #c9d1d9; /* GitHub Dark Dimmed - Primary Text */
+    --color-text-secondary: #8b949e;/* GitHub Dark Dimmed - Secondary Text */
+    --color-accent-blue: #58a6ff;  /* GitHub Dark Dimmed - Blue */
+    --color-accent-purple: #bc8cff;/* GitHub Dark Dimmed - Purple */
+    --color-accent-cyan: #76e3ea;  /* Bright Cyan for Glow */
+    --color-accent-orange: #ff7b72;/* GitHub Dark Dimmed - Orange/Red for Contrast */
+
+    --font-primary: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+    --font-secondary: 'Space Mono', monospace;
+    --font-headline: 'Exo 2', sans-serif;
+
+    --section-padding-y: clamp(100px, 20vh, 180px);
+    --section-padding-x: clamp(20px, 8vw, 100px);
+    --transition-smooth: 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+    font-family: var(--font-primary);
+    background-color: var(--color-bg-deep);
+    color: var(--color-text-primary);
+    line-height: 1.7;
+    overflow-x: hidden;
+    opacity: 0; /* Start hidden for preloader */
+    transition: opacity 0.8s ease-in-out 0.5s; /* Fade in after preloader */
+}
+body.loading { opacity: 0; }
+body:not(.loading) { opacity: 1; }
+
+/* === PRELOADER === */
+.preloader {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background-color: var(--color-bg-deep);
+    z-index: 10000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: opacity 0.8s ease, visibility 0.8s ease;
+}
+body.loading .preloader { opacity: 1; visibility: visible; }
+body:not(.loading) .preloader { opacity: 0; visibility: hidden; }
+.preloader-inner { text-align: center; }
+.preloader-icon { width: 60px; height: 60px; margin: 0 auto 20px; }
+.preloader-icon .orbit { fill: none; stroke: var(--color-border); stroke-width: 2; }
+.preloader-icon .planet { fill: var(--color-accent-blue); animation: orbit 3s linear infinite; }
+@keyframes orbit { from { transform: rotate(0deg) translateX(45px) rotate(0deg); } to { transform: rotate(360deg) translateX(45px) rotate(-360deg); } }
+.preloader-text { font-family: var(--font-secondary); color: var(--color-text-secondary); font-size: 0.9rem; letter-spacing: 1px; }
+
+/* === PARTICLES === */
+#particles-js {
+    position: fixed;
+    width: 100%; height: 100%;
+    top: 0; left: 0;
+    z-index: -1;
+}
+
+/* === MAIN CONTENT === */
+#main-content { position: relative; z-index: 1; width: 100%; overflow: hidden; }
+
+/* === HERO SECTION === */
+.hero-section {
+    height: 100vh;
+    min-height: 600px; /* Mindesthöhe */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    color: #fff;
+}
+.hero-background { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; }
+.hero-layer {
+    position: absolute; top: -10%; left: -10%; width: 120%; height: 120%; /* Größer für Parallax */
+    background-size: cover;
+    background-position: center center;
+    will-change: transform; /* Performance-Hinweis */
+}
+.layer-stars-far { opacity: 0.7; }
+.layer-nebula { opacity: 0.4; mix-blend-mode: screen; } /* Schön für Nebel */
+.layer-grid { opacity: 0.1; background-repeat: repeat; background-size: 100px 100px; } /* Gitter */
+.hero-vignette {
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    background: radial-gradient(ellipse at center, rgba(13, 17, 23, 0) 50%, rgba(13, 17, 23, 0.9) 100%);
+    z-index: 2;
+}
+.hero-content { position: relative; z-index: 3; padding: 20px; max-width: 900px; }
+.hero-headline {
+    font-family: var(--font-headline);
+    font-size: clamp(3.5rem, 10vw, 7rem);
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    margin-bottom: 0.5rem;
+    color: #fff;
+    text-shadow: 0 0 20px rgba(88, 166, 255, 0.4); /* Blauer Glow */
+    /* Styling für SplitType */
+    line-height: 1.1;
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 0% 100%); /* Für Reveal */
+}
+.hero-headline .char { /* Wird von SplitType erstellt */
+    display: inline-block;
+    transform: translateY(110%);
+    opacity: 0;
+}
+.hero-subtitle {
+    font-family: var(--font-secondary);
+    font-size: clamp(1rem, 2.5vw, 1.4rem);
+    color: var(--color-text-secondary);
+    margin-bottom: 1rem;
+    letter-spacing: 0.05em;
+    opacity: 0; /* Start für GSAP */
+}
+.hero-tagline {
+    font-size: clamp(1.1rem, 3vw, 1.6rem);
+    color: var(--color-text-primary);
+    margin-bottom: 2.5rem;
+    opacity: 0; /* Start für GSAP */
+    font-weight: 300;
+}
+.hero-cta { opacity: 0; /* Start für GSAP */ }
+.cta-button {
+    display: inline-flex; align-items: center; gap: 12px;
+    background: linear-gradient(45deg, var(--color-accent-blue), var(--color-accent-purple));
+    color: #fff;
+    padding: 16px 45px;
+    border-radius: 50px;
+    text-decoration: none;
+    font-weight: 600; font-size: 1.1rem;
+    transition: transform var(--transition-smooth), box-shadow var(--transition-smooth);
+    box-shadow: 0 8px 25px rgba(88, 166, 255, 0.2);
+    border: none;
+    position: relative; /* Für Magnetic Effect */
+}
+.cta-button:hover {
+    transform: scale(1.05);
+    box-shadow: 0 12px 30px rgba(188, 140, 255, 0.3);
+}
+.cta-button i { transition: transform 0.3s ease; }
+.cta-button:hover i { transform: translateY(4px); }
+
+/* === GENERAL CONTENT SECTION STYLING === */
+.content-section {
+    padding: var(--section-padding-y) var(--section-padding-x);
+    position: relative;
+    background-color: var(--color-bg-medium); /* Leichter abheben */
+    border-bottom: 1px solid var(--color-border);
+}
+.content-section:nth-child(odd) { /* Abwechselnde Hintergründe */
+     background-color: var(--color-bg-light);
+}
+
+.section-header {
+    text-align: center;
+    margin-bottom: clamp(40px, 8vh, 80px);
+}
+.section-title {
+    font-family: var(--font-headline);
+    font-size: clamp(2.5rem, 6vw, 4rem);
+    font-weight: 700;
+    color: var(--color-text-primary);
+    margin-bottom: 1rem;
+    letter-spacing: -0.02em;
+    opacity: 0; /* Start für GSAP */
+}
+.section-decorator { /* Animierte Linie */
+    display: block;
+    width: 80px;
+    height: 3px;
+    background: linear-gradient(90deg, var(--color-accent-blue), var(--color-accent-purple));
+    margin: 0 auto;
+    transform: scaleX(0); /* Start für GSAP */
+    transform-origin: center;
+}
+
+/* === ABOUT SECTION === */
+.about-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: clamp(30px, 5vw, 60px);
+    align-items: start;
+}
+.about-text p {
+    margin-bottom: 1.5em;
+    color: var(--color-text-secondary);
+    font-size: 1.1rem;
+}
+.skills-box {
+    background-color: var(--color-bg-light); /* Etwas dunkler */
+    padding: clamp(20px, 4vw, 40px);
+    border-radius: 10px;
+    border: 1px solid var(--color-border);
+}
+.skills-box h3 {
+    font-family: var(--font-secondary);
+    color: var(--color-accent-purple);
+    margin-bottom: 1.5rem;
+    font-size: 1.1rem;
+    letter-spacing: 0.05em;
+}
+.skills-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+.skills-tags span {
+    background-color: var(--color-bg-medium);
+    padding: 8px 15px;
+    border-radius: 20px;
+    font-family: var(--font-secondary);
+    font-size: 0.85rem;
+    display: inline-flex; align-items: center; gap: 8px;
+    border: 1px solid transparent;
+    transition: background-color 0.3s, border-color 0.3s, color 0.3s;
+    color: var(--color-text-secondary);
+}
+.skills-tags span i { color: var(--color-accent-blue); transition: color 0.3s; }
+.skills-tags span:hover {
+    background-color: rgba(88, 166, 255, 0.1);
+    border-color: rgba(88, 166, 255, 0.5);
+    color: var(--color-text-primary);
+}
+.skills-tags span:hover i { color: var(--color-accent-blue); }
+
+/* === EXPLORATIONS / PROJECTS SECTION === */
+.explorations-section { background-color: var(--color-bg-deep); /* Wieder dunkler */ }
+.projekt-grid {
+    display: grid;
+    /* Responsive Grid mit min/max Breite */
+    grid-template-columns: repeat(auto-fit, minmax(clamp(300px, 30vw, 400px), 1fr));
+    gap: clamp(30px, 4vw, 50px);
+}
+.projekt-karte {
+    background-color: var(--color-bg-light);
+    border-radius: 12px;
+    border: 1px solid var(--color-border);
+    overflow: hidden;
+    position: relative;
+    display: flex; flex-direction: column;
+    min-height: 450px; /* Mindesthöhe geben */
+    box-shadow: 0 10px 30px rgba(0,0,0, 0.2);
+    transition: transform var(--transition-smooth), box-shadow var(--transition-smooth), border-color var(--transition-smooth);
+    opacity: 0; /* Start für GSAP */
+    transform: translateY(50px); /* Start für GSAP */
+}
+.projekt-karte:hover {
+    transform: translateY(-10px) scale(1.02) !important; /* Überschreibt GSAP Transform */
+    box-shadow: 0 20px 40px rgba(0,0,0, 0.3);
+    border-color: var(--color-accent-blue);
+}
+.projekt-karte-background {
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    background-size: cover; background-position: center;
+    opacity: 0.15; /* Sehr subtil */
+    transition: opacity 0.5s, transform 0.5s;
+    z-index: 1;
+}
+.projekt-karte:hover .projekt-karte-background {
+    opacity: 0.3;
+    transform: scale(1.1);
+}
+.projekt-karte-overlay {
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    background: linear-gradient(180deg, rgba(22, 27, 34, 0.4) 0%, rgba(13, 17, 23, 0.9) 100%);
+    z-index: 2;
+    pointer-events: none; /* Lässt Klicks durch */
+}
+.projekt-karte-overlay.overlay-bright { background: linear-gradient(180deg, rgba(201, 209, 217, 0.1) 0%, rgba(13, 17, 23, 0.8) 100%); }
+.projekt-karte-overlay.overlay-dark { background: rgba(1, 4, 9, 0.7); }
+.projekt-karte-overlay.overlay-code {
+     background: linear-gradient(rgba(13, 17, 23, 0.8), rgba(1, 4, 9, 0.95)), url('img/code_texture_subtle.png') repeat;
+     background-size: auto, 80px 80px; opacity: 0.6;
+}
+
+.projekt-inhalt {
+    position: relative; z-index: 3;
+    padding: clamp(20px, 4vw, 35px);
+    display: flex; flex-direction: column;
+    flex-grow: 1; /* Wichtig damit Inhalt den Platz füllt */
+}
+.projekt-id {
+    position: absolute; top: 15px; right: 20px;
+    font-family: var(--font-secondary); color: var(--color-text-secondary);
+    font-size: 0.8rem; opacity: 0.4;
+}
+.projekt-inhalt h3 {
+    font-family: var(--font-headline); font-size: 1.7rem;
+    color: var(--color-text-primary); margin-bottom: 0.8rem; line-height: 1.2;
+}
+.projekt-inhalt p {
+    font-size: 0.95rem; color: var(--color-text-secondary);
+    flex-grow: 1; margin-bottom: 1.5rem;
+}
+.projekt-tags { margin-bottom: 1.5rem; display: flex; flex-wrap: wrap; gap: 8px; }
+.projekt-tags span {
+    background-color: rgba(88, 166, 255, 0.1); color: var(--color-accent-blue);
+    padding: 5px 12px; border-radius: 4px; font-size: 0.75rem;
+    font-family: var(--font-secondary); text-transform: uppercase; letter-spacing: 0.5px;
+}
+.projekt-links { margin-top: auto; /* Drückt Links nach unten */ display: flex; gap: 20px; }
+.projekt-links a {
+    color: var(--color-text-secondary); font-size: 1.6rem;
+    transition: color 0.3s, transform 0.3s;
+    position: relative; /* Für Magnetic Effect */
+}
+.projekt-links a:hover { color: var(--color-accent-blue); transform: scale(1.15); }
+
+/* === CONTACT SECTION === */
+.contact-section { text-align: center; background-color: var(--color-bg-light); }
+.contact-text {
+    color: var(--color-text-secondary);
+    font-size: 1.1rem;
+    max-width: 650px;
+    margin: 0 auto 3rem auto;
+    opacity: 0; /* Start für GSAP */
+}
+.social-links-immersive {
+    display: flex; justify-content: center; flex-wrap: wrap;
+    gap: clamp(25px, 5vw, 40px);
+}
+.social-links-immersive a {
+    color: var(--color-text-secondary);
+    font-size: clamp(2rem, 5vw, 2.8rem);
+    transition: color var(--transition-smooth), transform var(--transition-smooth), text-shadow var(--transition-smooth);
+    position: relative; /* Für Magnetic Effect */
+    opacity: 0; /* Start für GSAP */
+    transform: scale(0.5); /* Start für GSAP */
+}
+.social-links-immersive a:hover {
+    color: var(--color-accent-cyan);
+    transform: scale(1.2) !important; /* Überschreibt GSAP und Magnetic */
+    text-shadow: 0 0 20px var(--color-accent-cyan);
+}
+
+/* === FOOTER === */
+.footer {
+    padding: 50px var(--section-padding-x);
+    text-align: center;
+    background-color: var(--color-bg-deep);
+    border-top: 1px solid var(--color-border);
+    color: var(--color-text-secondary);
+}
+.footer p { margin-bottom: 0.5em; }
+.footer-subtle { font-size: 0.85rem; opacity: 0.7; font-family: var(--font-secondary); }
+
+/* === EASTER EGG OVERLAY === */
+.easter-egg-overlay {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background-color: rgba(1, 4, 9, 0.98);
+    z-index: 9999;
+    display: none; /* Wird per JS auf flex gesetzt */
+    justify-content: center; align-items: center; text-align: center;
+    flex-direction: column;
+    color: var(--color-accent-cyan);
+    font-family: var(--font-secondary);
+    font-size: clamp(1.2rem, 3vw, 1.8rem);
+    cursor: pointer; padding: 20px;
+    text-shadow: 0 0 15px var(--color-accent-cyan);
+    line-height: 1.5;
+    animation: flicker 0.1s infinite alternate;
+}
+.easter-egg-overlay p { margin-bottom: 1.5rem; }
+.easter-egg-overlay span { font-size: 0.9rem; color: var(--color-text-secondary); margin-top: 1rem; opacity: 0.7; }
+@keyframes flicker { from { opacity: 0.85; } to { opacity: 1; } }
+
+/* === RESPONSIVENESS (Basis) === */
+@media (max-width: 768px) {
+    :root { --section-padding-y: clamp(80px, 15vh, 120px); }
+    .about-grid { grid-template-columns: 1fr; } /* Stapeln */
+    .projekt-grid { grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
+    .hero-headline { font-size: clamp(2.5rem, 12vw, 4.5rem); }
+    .section-title { font-size: clamp(2rem, 7vw, 3rem); }
+}
